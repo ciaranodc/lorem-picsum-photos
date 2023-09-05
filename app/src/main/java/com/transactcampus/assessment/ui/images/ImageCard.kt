@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3Api::class, ExperimentalGlideComposeApi::class)
 
-package com.transactcampus.assessment.ui.photos
+package com.transactcampus.assessment.ui.images
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -30,7 +30,7 @@ fun ImageCard(image: Image) {
                 modifier = Modifier.fillMaxWidth()
             )
             Text(
-                text = image.author,
+                text = "Author: ${image.author}",
                 textAlign = TextAlign.Center,
                 maxLines = 1,
                 modifier = Modifier

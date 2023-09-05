@@ -7,8 +7,8 @@ import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.transactcampus.assessment.data.source.RemoteImageRepository
-import com.transactcampus.assessment.ui.photos.ImagesViewModel
-import com.transactcampus.assessment.ui.photos.ImagesViewModelFactory
+import com.transactcampus.assessment.ui.images.ImagesViewModel
+import com.transactcampus.assessment.ui.images.ImagesViewModelFactory
 
 class MainActivity : ComponentActivity() {
 

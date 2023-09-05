@@ -5,8 +5,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.transactcampus.assessment.ui.navigation.AppDestinations.IMAGES_ROUTE
-import com.transactcampus.assessment.ui.photos.ImagesScreen
-import com.transactcampus.assessment.ui.photos.ImagesViewModel
+import com.transactcampus.assessment.ui.images.ImagesScreen
+import com.transactcampus.assessment.ui.images.ImagesViewModel
 
 @Composable
 fun ImagesNavGraph(

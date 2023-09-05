@@ -1,8 +1,9 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package com.transactcampus.assessment.ui.photos
+package com.transactcampus.assessment.ui.images
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -16,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import com.transactcampus.assessment.data.Image
+import com.transactcampus.assessment.ui.composables.CustomDropdownMenu
 
 @Composable
 fun ImagesScreen(imagesViewModel: ImagesViewModel) {
@@ -34,16 +36,24 @@ fun ImagesScreen(imagesViewModel: ImagesViewModel) {
 
 @Composable
 fun ImageScreenContent(images: List<Image>) {
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(1),
-    ) {
+    val imagesList = images.reversed()
+    val authors: List<String> = images.map { it.author }.distinct()
 
-        items(
-            // reverse photos list because first few photos are terrible but last few are lovely
-            items = images.reversed(),
-            key = { it.id }
-        ) { shopItem ->
-            ImageCard(image = shopItem)
+    Column {
+        CustomDropdownMenu(
+            menuItems = authors,
+            defaultSelection = "Select author..."
+        )
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(1),
+        ) {
+            items(
+                // reverse photos list because first few photos are terrible but last few are lovely
+                items = imagesList,
+                key = { it.id }
+            ) { shopItem ->
+                ImageCard(image = shopItem)
+            }
         }
     }
 }

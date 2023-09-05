@@ -1,4 +1,4 @@
-package com.transactcampus.assessment.ui.photos
+package com.transactcampus.assessment.ui.images
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
