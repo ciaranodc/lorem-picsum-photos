@@ -22,7 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun CustomDropdownMenu(menuItems: List<String>, defaultSelection: String) {
+fun CustomDropdownMenu(menuItems: List<String>, defaultSelection: String, onSelectAuthor: (String) -> Unit) {
     var isExpanded by remember { mutableStateOf(false) }
     var selectedText by remember { mutableStateOf(defaultSelection) }
 
@@ -54,6 +54,7 @@ fun CustomDropdownMenu(menuItems: List<String>, defaultSelection: String) {
                     DropdownMenuItem(text = {
                         Text(text = item)
                     }, onClick = {
+                        onSelectAuthor(item)
                         selectedText = item
                         isExpanded = false
                     })
@@ -64,6 +65,7 @@ fun CustomDropdownMenu(menuItems: List<String>, defaultSelection: String) {
         Button(
             shape = RoundedCornerShape(10),
             onClick = {
+                onSelectAuthor(defaultSelection)
                 selectedText = defaultSelection
             }
         ) {
