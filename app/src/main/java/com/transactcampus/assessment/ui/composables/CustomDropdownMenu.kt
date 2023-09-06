@@ -20,11 +20,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.transactcampus.assessment.ui.images.DEFAULT_AUTHOR_SELECTION
 
 @Composable
-fun CustomDropdownMenu(menuItems: List<String>, defaultSelection: String, onSelectAuthor: (String) -> Unit) {
+fun CustomDropdownMenu(menuItems: List<String>, initialSelection: String, onSelectAuthor: (String) -> Unit) {
     var isExpanded by remember { mutableStateOf(false) }
-    var selectedText by remember { mutableStateOf(defaultSelection) }
 
     Row(
         modifier = Modifier
@@ -40,7 +40,7 @@ fun CustomDropdownMenu(menuItems: List<String>, defaultSelection: String, onSele
             }
         ) {
             TextField(
-                value = selectedText,
+                value = initialSelection,
                 onValueChange = {},
                 readOnly = true,
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded) },
@@ -55,7 +55,6 @@ fun CustomDropdownMenu(menuItems: List<String>, defaultSelection: String, onSele
                         Text(text = item)
                     }, onClick = {
                         onSelectAuthor(item)
-                        selectedText = item
                         isExpanded = false
                     })
                 }
@@ -65,8 +64,7 @@ fun CustomDropdownMenu(menuItems: List<String>, defaultSelection: String, onSele
         Button(
             shape = RoundedCornerShape(10),
             onClick = {
-                onSelectAuthor(defaultSelection)
-                selectedText = defaultSelection
+                onSelectAuthor(DEFAULT_AUTHOR_SELECTION)
             }
         ) {
             Text(text = "CLEAR")

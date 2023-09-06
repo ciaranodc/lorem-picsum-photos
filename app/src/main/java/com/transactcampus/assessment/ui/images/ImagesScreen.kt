@@ -2,7 +2,6 @@
 
 package com.transactcampus.assessment.ui.images
 
-import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -17,19 +16,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.transactcampus.assessment.data.Image
 import com.transactcampus.assessment.ui.composables.CustomDropdownMenu
 
+const val DEFAULT_AUTHOR_SELECTION = "Select author..."
+
 @Composable
 fun ImagesScreen(imagesViewModel: ImagesViewModel) {
-    val defaultSelection = "Select author..."
     val images by imagesViewModel.images.observeAsState(initial = emptyList())
-    val previouslySelectedAuthor = imagesViewModel.lastSelectedAuthor.collectAsState(initial = defaultSelection)
-    Log.d("TAG things", previouslySelectedAuthor.value)
+    val lastSelectedAuthor by imagesViewModel.selectedAuthor.collectAsState(initial = DEFAULT_AUTHOR_SELECTION)
+
+    val authorsList = images.map { it.author }.distinct()
+    val imagesToShow = if (lastSelectedAuthor == DEFAULT_AUTHOR_SELECTION) {
+        images.reversed() // reversing list because photos at the end are nicer!
+    } else {
+        images.filter { it.author == lastSelectedAuthor }
+    }
 
     Scaffold(topBar = {
         TopAppBar(
@@ -38,8 +41,9 @@ fun ImagesScreen(imagesViewModel: ImagesViewModel) {
         Box(modifier = Modifier.padding(contentPadding)) {
             // Reversing photos list because first few photos are terrible but last few are lovely
             ImageScreenContent(
-                images.reversed(),
-                previouslySelectedAuthor.value ?: "",
+                imagesToShow,
+                authorsList,
+                lastSelectedAuthor,
                 onSelectAuthor = { author ->
                     imagesViewModel.saveAuthorSelection(author)
                 })
@@ -50,29 +54,15 @@ fun ImagesScreen(imagesViewModel: ImagesViewModel) {
 @Composable
 fun ImageScreenContent(
     images: List<Image>,
-    previouslySelectedAuthor: String,
+    authorsList: List<String>,
+    currentAuthorSelection: String,
     onSelectAuthor: (String) -> Unit
 ) {
-    val defaultSelection = "Select author..."
-    val authors: List<String> = images.map { it.author }.distinct()
-
-    var selectedAuthor by remember { mutableStateOf(previouslySelectedAuthor) }
-
-    val imagesList = if (authors.contains(previouslySelectedAuthor)) {
-        selectedAuthor = previouslySelectedAuthor
-        images.filter { it.author == previouslySelectedAuthor }
-    } else if (selectedAuthor == defaultSelection) {
-        images
-    } else {
-        images.filter { it.author == selectedAuthor }
-    }
-
     Column {
         CustomDropdownMenu(
-            menuItems = authors,
-            defaultSelection = defaultSelection,
+            menuItems = authorsList,
+            initialSelection = currentAuthorSelection,
             onSelectAuthor = {
-                selectedAuthor = it
                 onSelectAuthor(it)
             }
         )
@@ -82,7 +72,7 @@ fun ImageScreenContent(
         ) {
 
             items(
-                items = imagesList,
+                items = images,
                 key = { it.id }
             ) { shopItem ->
                 ImageCard(image = shopItem)

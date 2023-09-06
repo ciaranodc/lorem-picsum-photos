@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Transact Campus Assessment</string>
+    <string name="default_author_selection">Select author...</string>
 </resources>
