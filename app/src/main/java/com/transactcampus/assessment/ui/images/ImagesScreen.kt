@@ -2,6 +2,7 @@
 
 package com.transactcampus.assessment.ui.images
 
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -13,6 +14,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -24,8 +26,10 @@ import com.transactcampus.assessment.ui.composables.CustomDropdownMenu
 
 @Composable
 fun ImagesScreen(imagesViewModel: ImagesViewModel) {
-
+    val defaultSelection = "Select author..."
     val images by imagesViewModel.images.observeAsState(initial = emptyList())
+    val previouslySelectedAuthor = imagesViewModel.lastSelectedAuthor.collectAsState(initial = defaultSelection)
+    Log.d("TAG things", previouslySelectedAuthor.value)
 
     Scaffold(topBar = {
         TopAppBar(
@@ -33,19 +37,31 @@ fun ImagesScreen(imagesViewModel: ImagesViewModel) {
     }) { contentPadding ->
         Box(modifier = Modifier.padding(contentPadding)) {
             // Reversing photos list because first few photos are terrible but last few are lovely
-            ImageScreenContent(images.reversed())
+            ImageScreenContent(
+                images.reversed(),
+                previouslySelectedAuthor.value ?: "",
+                onSelectAuthor = { author ->
+                    imagesViewModel.saveAuthorSelection(author)
+                })
         }
     }
 }
 
 @Composable
-fun ImageScreenContent(images: List<Image>) {
+fun ImageScreenContent(
+    images: List<Image>,
+    previouslySelectedAuthor: String,
+    onSelectAuthor: (String) -> Unit
+) {
     val defaultSelection = "Select author..."
     val authors: List<String> = images.map { it.author }.distinct()
 
-    var selectedAuthor by remember { mutableStateOf("Select author...") }
+    var selectedAuthor by remember { mutableStateOf(previouslySelectedAuthor) }
 
-    val imagesList = if (selectedAuthor == defaultSelection) {
+    val imagesList = if (authors.contains(previouslySelectedAuthor)) {
+        selectedAuthor = previouslySelectedAuthor
+        images.filter { it.author == previouslySelectedAuthor }
+    } else if (selectedAuthor == defaultSelection) {
         images
     } else {
         images.filter { it.author == selectedAuthor }
@@ -57,6 +73,7 @@ fun ImageScreenContent(images: List<Image>) {
             defaultSelection = defaultSelection,
             onSelectAuthor = {
                 selectedAuthor = it
+                onSelectAuthor(it)
             }
         )
 
