@@ -8,6 +8,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.transactcampus.assessment.data.Image
 import com.transactcampus.assessment.data.Result
+import com.transactcampus.assessment.data.datastore.LocalUserPreferences
+import com.transactcampus.assessment.data.datastore.LocalUserPreferences.Companion.SELECTED_AUTHOR_KEY
 import com.transactcampus.assessment.data.datastore.UserPreferences
 import com.transactcampus.assessment.data.source.ImageRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +20,7 @@ class ImagesViewModel(
     private val imageRepository: ImageRepository,
     private val userPreferences: UserPreferences
 ) : ViewModel() {
-    var _images = MutableLiveData<Result<List<Image>>>()
+    private var _images = MutableLiveData<Result<List<Image>>>()
     val images: LiveData<Result<List<Image>>> = _images
 
     fun loadImages() {
@@ -27,7 +29,7 @@ class ImagesViewModel(
         }
     }
 
-    private var selectedAuthorDataStoreFlow = userPreferences.storedAuthor
+    private var selectedAuthorDataStoreFlow = userPreferences.getStoredData(SELECTED_AUTHOR_KEY)
 
     private var userSelectedAuthorFlow = MutableStateFlow(DEFAULT_AUTHOR_SELECTION)
 
@@ -51,7 +53,7 @@ class ImagesViewModel(
 
         viewModelScope.launch {
             try {
-                userPreferences.storeSelectedAuthor(author)
+                userPreferences.storeData(SELECTED_AUTHOR_KEY, author)
             } catch (e: Exception) {
                 Log.e("ImagesViewModel", e.message.toString())
             }
@@ -61,7 +63,7 @@ class ImagesViewModel(
 
 class ImagesViewModelFactory(
     private val imageRepository: ImageRepository,
-    private val userPreferences: UserPreferences
+    private val userPreferences: LocalUserPreferences
 ) :
     ViewModelProvider.NewInstanceFactory() {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
