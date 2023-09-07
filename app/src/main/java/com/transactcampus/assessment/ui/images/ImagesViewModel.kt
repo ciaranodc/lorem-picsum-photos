@@ -2,11 +2,12 @@ package com.transactcampus.assessment.ui.images
 
 import android.util.Log
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import com.transactcampus.assessment.data.Image
+import com.transactcampus.assessment.data.Result
 import com.transactcampus.assessment.data.datastore.UserPreferences
 import com.transactcampus.assessment.data.source.ImageRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,10 +18,13 @@ class ImagesViewModel(
     private val imageRepository: ImageRepository,
     private val userPreferences: UserPreferences
 ) : ViewModel() {
-    val images: LiveData<List<Image>> = liveData {
-        val data = imageRepository.getImages()
-        Log.d("tag", "getImages")
-        emit(data)
+    var _images = MutableLiveData<Result<List<Image>>>()
+    val images: LiveData<Result<List<Image>>> = _images
+
+    fun loadImages() {
+        viewModelScope.launch {
+            _images.value = imageRepository.getImages()
+        }
     }
 
     private var selectedAuthorDataStoreFlow = userPreferences.storedAuthor

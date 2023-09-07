@@ -2,22 +2,24 @@ package com.transactcampus.assessment.data.source
 
 import android.util.Log
 import com.transactcampus.assessment.data.Image
+import com.transactcampus.assessment.data.Result
 import com.transactcampus.assessment.data.api.RetrofitInstance
 
 class RemoteImageRepository : ImageRepository {
 
-    private val itemService = RetrofitInstance.itemService
+    private val imagesRetrofitService = RetrofitInstance.imagesRetrofitService
 
-    override suspend fun getImages(): List<Image> {
-        var imagesList = emptyList<Image>()
+    override suspend fun getImages(): Result<List<Image>> {
+        val imagesList: List<Image>
 
         try {
-            imagesList = itemService.getImagesList()
+            imagesList = imagesRetrofitService.getImagesList()
         } catch (e: Exception) {
             Log.e(TAG, e.message.toString())
+            return Result.Error(e)
         }
 
-        return imagesList
+        return Result.Success(imagesList)
     }
 
     companion object {

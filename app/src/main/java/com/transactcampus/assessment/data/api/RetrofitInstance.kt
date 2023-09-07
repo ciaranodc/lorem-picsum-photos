@@ -13,7 +13,7 @@ object RetrofitInstance {
             .build()
     }
 
-    val itemService: ImagesRetrofitService by lazy {
+    val imagesRetrofitService: ImagesRetrofitService by lazy {
         retrofit.create(ImagesRetrofitService::class.java)
     }
 }
