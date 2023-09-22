@@ -13,5 +13,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "transactcampusassessment"
+rootProject.name = "lorempicsumphotos"
 include ':app'
