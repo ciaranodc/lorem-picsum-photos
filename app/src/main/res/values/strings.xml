@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Transact Campus Assessment</string>
-    <string name="app_bar_title">LoremPicsum</string>
-    <string name="default_author_selection">Select author...</string>
+    <string name="app_name">Lorem Picsum Photos</string>
+    <string name="app_bar_title">Lorem Picsum Photos</string>
+    <string name="default_author_selection">Select author…</string>
 </resources>
