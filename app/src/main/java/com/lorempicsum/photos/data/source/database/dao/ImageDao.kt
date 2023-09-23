@@ -1,0 +1,25 @@
+package com.lorempicsum.photos.data.source.database.dao
+
+import androidx.paging.PagingSource
+import androidx.room.Dao
+import androidx.room.Query
+import androidx.room.Upsert
+import com.lorempicsum.photos.data.source.database.entity.ImageEntity
+
+@Dao
+interface ImageDao {
+    @Query("SELECT * FROM image")
+    fun getAll(): PagingSource<Int, ImageEntity>
+
+    @Query("SELECT * FROM image WHERE author IS :query")
+    fun getImagesByAuthor(query: String): PagingSource<Int, ImageEntity>
+
+    /**
+     * Insert images if they don't exist or update them if they do
+     */
+    @Upsert
+    fun upsertAll(images: List<ImageEntity>)
+
+    @Query("DELETE FROM image")
+    suspend fun clearAll()
+}

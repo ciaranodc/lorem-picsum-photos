@@ -1,4 +1,4 @@
-package com.lorempicsum.photos.data.source.database
+package com.lorempicsum.photos.data.source.database.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

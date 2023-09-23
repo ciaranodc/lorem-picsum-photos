@@ -1,8 +1,9 @@
-package com.lorempicsum.photos.data.source.database
+package com.lorempicsum.photos.data.source.database.dao
 
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Upsert
+import com.lorempicsum.photos.data.source.database.entity.AuthorEntity
 
 @Dao
 interface AuthorDao {

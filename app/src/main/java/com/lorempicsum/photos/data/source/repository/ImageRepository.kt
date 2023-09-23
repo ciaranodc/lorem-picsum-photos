@@ -1,8 +1,12 @@
 package com.lorempicsum.photos.data.source.repository
 
-import com.lorempicsum.photos.data.Image
-import com.lorempicsum.photos.data.Result
+import androidx.paging.PagingData
+import com.lorempicsum.photos.data.source.database.entity.AuthorEntity
+import com.lorempicsum.photos.data.source.database.entity.ImageEntity
+import kotlinx.coroutines.flow.Flow
 
 interface ImageRepository {
-    suspend fun getImages() : Result<List<Image>>
+    fun getImages(query: String? = null) : Flow<PagingData<ImageEntity>>
+
+    val selectedAuthor: Flow<AuthorEntity?>
 }

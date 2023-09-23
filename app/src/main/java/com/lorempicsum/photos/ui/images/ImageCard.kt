@@ -17,9 +17,10 @@ import androidx.compose.ui.unit.dp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.lorempicsum.photos.data.Image
+import com.lorempicsum.photos.data.source.database.entity.ImageEntity
 
 @Composable
-fun ImageCard(image: Image) {
+fun ImageCard(image: ImageEntity) {
     Card(
         modifier = Modifier.padding(all = 10.dp)
     ) {
