@@ -9,10 +9,10 @@ import com.lorempicsum.photos.data.source.database.entity.ImageEntity
 @Dao
 interface ImageDao {
     @Query("SELECT * FROM image")
-    fun getAll(): PagingSource<Int, ImageEntity>
+    fun getAllImages(): PagingSource<Int, ImageEntity>
 
-    @Query("SELECT * FROM image WHERE author IS :query")
-    fun getImagesByAuthor(query: String): PagingSource<Int, ImageEntity>
+    @Query("SELECT * FROM image WHERE author IS :author")
+    fun getImagesByAuthor(author: String): PagingSource<Int, ImageEntity>
 
     /**
      * Insert images if they don't exist or update them if they do

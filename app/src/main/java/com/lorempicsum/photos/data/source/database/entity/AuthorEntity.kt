@@ -7,10 +7,8 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "author")
 data class AuthorEntity(
     @PrimaryKey
-    @ColumnInfo("id")
-    val id: String,
-    @ColumnInfo("author")
-    val author: String,
+    @ColumnInfo("author_name")
+    val authorName: String,
     @ColumnInfo("is_selected")
     val isSelected: Boolean = false,
 )
