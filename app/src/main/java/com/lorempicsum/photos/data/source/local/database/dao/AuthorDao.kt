@@ -1,9 +1,9 @@
-package com.lorempicsum.photos.data.source.database.dao
+package com.lorempicsum.photos.data.source.local.database.dao
 
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Upsert
-import com.lorempicsum.photos.data.source.database.entity.AuthorEntity
+import com.lorempicsum.photos.data.source.local.database.entity.AuthorEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao

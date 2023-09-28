@@ -1,4 +1,4 @@
-package com.lorempicsum.photos.data.source.database.entity
+package com.lorempicsum.photos.data.source.local.database.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

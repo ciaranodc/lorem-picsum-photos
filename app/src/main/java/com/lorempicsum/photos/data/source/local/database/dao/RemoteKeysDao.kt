@@ -1,10 +1,10 @@
-package com.lorempicsum.photos.data.source.database.dao
+package com.lorempicsum.photos.data.source.local.database.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.lorempicsum.photos.data.source.database.entity.RemoteKeysEntity
+import com.lorempicsum.photos.data.source.local.database.entity.RemoteKeysEntity
 
 @Dao
 interface RemoteKeysDao {

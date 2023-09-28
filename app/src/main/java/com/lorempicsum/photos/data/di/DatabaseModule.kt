@@ -2,8 +2,8 @@ package com.lorempicsum.photos.data.di
 
 import android.content.Context
 import androidx.room.Room
-import com.lorempicsum.photos.data.source.database.ImageDatabase
-import com.lorempicsum.photos.data.source.database.dao.ImageDao
+import com.lorempicsum.photos.data.source.local.database.ImageDatabase
+import com.lorempicsum.photos.data.source.local.database.dao.ImageDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

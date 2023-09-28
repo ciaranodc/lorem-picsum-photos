@@ -1,10 +1,10 @@
-package com.lorempicsum.photos.data.source.database.dao
+package com.lorempicsum.photos.data.source.local.database.dao
 
 import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Upsert
-import com.lorempicsum.photos.data.source.database.entity.ImageEntity
+import com.lorempicsum.photos.data.source.local.database.entity.ImageEntity
 
 @Dao
 interface ImageDao {

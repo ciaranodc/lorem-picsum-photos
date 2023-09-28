@@ -1,25 +1,25 @@
-@file:OptIn(ExperimentalPagingApi::class)
-
 package com.lorempicsum.photos.data.source.repository
 
-import android.util.Log
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.room.withTransaction
 import com.lorempicsum.photos.data.api.ImageApiService
-import com.lorempicsum.photos.data.source.database.ImageDatabase
-import com.lorempicsum.photos.data.source.database.entity.AuthorEntity
-import com.lorempicsum.photos.data.source.database.entity.ImageEntity
+import com.lorempicsum.photos.data.source.local.database.ImageDatabase
+import com.lorempicsum.photos.data.source.local.database.entity.AuthorEntity
+import com.lorempicsum.photos.data.source.local.database.entity.ImageEntity
 import com.lorempicsum.photos.data.source.remote.mediator.ImageRemoteMediator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import javax.inject.Inject
 
-private const val PAGE_SIZE = 50
+private const val PAGE_SIZE = 10
+private const val INITIAL_LOAD_SIZE = 10
 
+@OptIn(ExperimentalPagingApi::class)
 class ImageRepositoryImpl @Inject constructor(
     private val imageDatabase: ImageDatabase,
     private val imageApiService: ImageApiService
@@ -29,7 +29,7 @@ class ImageRepositoryImpl @Inject constructor(
         return Pager(
             config = PagingConfig(
                 pageSize = PAGE_SIZE,
-                initialLoadSize = PAGE_SIZE
+                initialLoadSize = INITIAL_LOAD_SIZE
             ),
             remoteMediator = ImageRemoteMediator(
                 author,
@@ -64,7 +64,7 @@ class ImageRepositoryImpl @Inject constructor(
                     }
                 }
             } catch (e: Exception) {
-                Log.e("ImageRepositoryImpl", "Failed to update author selection: ${e.message}")
+                Timber.e("Failed to update author selection: " + e.message)
             }
         }
     }

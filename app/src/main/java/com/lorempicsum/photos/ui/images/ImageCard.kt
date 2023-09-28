@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalGlideComposeApi::class)
-
 package com.lorempicsum.photos.ui.images
 
 import androidx.compose.foundation.layout.Column
@@ -17,8 +15,9 @@ import androidx.compose.ui.unit.dp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.lorempicsum.photos.data.Image
-import com.lorempicsum.photos.data.source.database.entity.ImageEntity
+import com.lorempicsum.photos.data.source.local.database.entity.ImageEntity
 
+@ExperimentalGlideComposeApi
 @Composable
 fun ImageCard(image: ImageEntity) {
     Card(

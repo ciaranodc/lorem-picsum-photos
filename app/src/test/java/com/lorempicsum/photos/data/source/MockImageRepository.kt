@@ -5,8 +5,8 @@ import com.google.gson.Gson
 import com.lorempicsum.photos.TestUtils
 import com.lorempicsum.photos.data.Image
 import com.lorempicsum.photos.data.Result
-import com.lorempicsum.photos.data.source.database.entity.AuthorEntity
-import com.lorempicsum.photos.data.source.database.entity.ImageEntity
+import com.lorempicsum.photos.data.source.local.database.entity.AuthorEntity
+import com.lorempicsum.photos.data.source.local.database.entity.ImageEntity
 import com.lorempicsum.photos.data.source.repository.ImageRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -7,10 +7,10 @@ import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
 import com.lorempicsum.photos.data.api.ImageApiService
-import com.lorempicsum.photos.data.source.database.ImageDatabase
-import com.lorempicsum.photos.data.source.database.entity.AuthorEntity
-import com.lorempicsum.photos.data.source.database.entity.ImageEntity
-import com.lorempicsum.photos.data.source.database.entity.RemoteKeysEntity
+import com.lorempicsum.photos.data.source.local.database.ImageDatabase
+import com.lorempicsum.photos.data.source.local.database.entity.AuthorEntity
+import com.lorempicsum.photos.data.source.local.database.entity.ImageEntity
+import com.lorempicsum.photos.data.source.local.database.entity.RemoteKeysEntity
 import retrofit2.HttpException
 import java.io.IOException
 
