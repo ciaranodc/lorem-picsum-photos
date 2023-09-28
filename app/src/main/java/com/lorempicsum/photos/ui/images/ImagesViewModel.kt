@@ -7,6 +7,8 @@ import com.lorempicsum.photos.data.source.local.database.entity.AuthorEntity
 import com.lorempicsum.photos.data.source.repository.ImageRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -16,7 +18,20 @@ class ImagesViewModel @Inject constructor(
     private val imageRepository: ImageRepository
 ) : ViewModel() {
 
-    val images = imageRepository.getImages().cachedIn(viewModelScope)
+    val selectedAuthor = imageRepository
+        .selectedAuthor
+        .map {
+            it?.authorName
+        }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = null
+        )
+
+    val images = selectedAuthor.flatMapLatest {
+        imageRepository.getImages(it).cachedIn(viewModelScope)
+    }
 
     fun updateSelectedAuthor(author: AuthorEntity?) {
         viewModelScope.launch {
@@ -24,34 +39,12 @@ class ImagesViewModel @Inject constructor(
         }
     }
 
-    val selectedAuthor = imageRepository
-        .selectedAuthor
+    //todo: filter these by authors of the images currently loaded
+    val authors = imageRepository
+        .authors
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
-            initialValue = null
+            initialValue = emptyList()
         )
-
-//    private var userSelectedAuthorFlow = MutableStateFlow(DEFAULT_AUTHOR_SELECTION)
-//
-//    val selectedAuthor = userSelectedAuthorFlow
-//
-//    private fun updateUserSelectedAuthor(author: String) {
-//        userSelectedAuthorFlow.value = author
-//    }
-//
-//    fun saveAuthorSelection(author: String) {
-//        updateUserSelectedAuthor(author)
-//
-//        //todo: save to db
-//    }
 }
-
-//class ImagesViewModelFactory @Inject constructor(
-//    private val imagesRepository: ImagesRepository,
-//) :
-//    ViewModelProvider.NewInstanceFactory() {
-//    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-//        return ImagesViewModel(imagesRepository) as T
-//    }
-//}

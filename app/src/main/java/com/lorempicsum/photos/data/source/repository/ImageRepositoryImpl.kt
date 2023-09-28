@@ -46,19 +46,26 @@ class ImageRepositoryImpl @Inject constructor(
         ).flow
     }
 
+    override val authors: Flow<List<AuthorEntity>> = imageDatabase.authorDao().getAllAuthorsFlow()
+
+    override val selectedAuthor: Flow<AuthorEntity?>
+        get() = imageDatabase.authorDao().getCurrentSelectedAuthorFlow()
+
     override suspend fun updateAuthorSelection(author: AuthorEntity?) {
         withContext(Dispatchers.IO) {
             try {
                 val authorDao = imageDatabase.authorDao()
 
                 imageDatabase.withTransaction {
+                    // Deselect old selected author
                     val currentSelectedAuthor =
                         authorDao.getCurrentSelectedAuthor()?.copy(isSelected = false)
-
                     if (currentSelectedAuthor != null) {
                         authorDao.upsertAuthor(currentSelectedAuthor)
                     }
 
+                    // Mark newly selected author as selected
+                    Timber.d("author $author")
                     if (author != null) {
                         authorDao.upsertAuthor(author)
                     }
@@ -68,7 +75,4 @@ class ImageRepositoryImpl @Inject constructor(
             }
         }
     }
-
-    override val selectedAuthor: Flow<AuthorEntity?>
-        get() = imageDatabase.authorDao().getCurrentSelectedAuthorFlow()
 }

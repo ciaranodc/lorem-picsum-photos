@@ -28,27 +28,24 @@ import com.lorempicsum.photos.ui.composables.CustomDropdownMenu
 import com.lorempicsum.photos.ui.composables.ErrorRetryButton
 import timber.log.Timber
 
-const val DEFAULT_AUTHOR_SELECTION = "Select author..."
-
 @ExperimentalMaterial3Api
 @Composable
 fun ImagesScreen(imagesViewModel: ImagesViewModel) {
-    val imagesResult = imagesViewModel.images.collectAsLazyPagingItems()
     val lastSelectedAuthor by imagesViewModel.selectedAuthor.collectAsStateWithLifecycle()
-    val authorsList = imagesResult.itemSnapshotList.items.map { it.author }.distinct()
+    val images = imagesViewModel.images.collectAsLazyPagingItems()
+    val authors by imagesViewModel.authors.collectAsStateWithLifecycle()
 
     Scaffold(topBar = {
         TopAppBar(title = { Text(stringResource(R.string.app_bar_title)) })
     }) { contentPadding ->
         Box(modifier = Modifier.padding(contentPadding)) {
             // Reversing photos list because first few photos are terrible but last few are lovely
-            Timber.d("lastSelectedAuthor?.authorName ${lastSelectedAuthor?.authorName}")
-            ImageScreenContent(
-                imagesResult,
-                authorsList,
-                lastSelectedAuthor?.authorName ?: stringResource(R.string.select_author),
-                onSelectAuthor = { author ->
-                    imagesViewModel.updateSelectedAuthor(AuthorEntity(author, true))
+            Timber.d("lastSelectedAuthor $lastSelectedAuthor")
+            ImageScreenContent(images,
+                authors,
+                lastSelectedAuthor ?: stringResource(R.string.select_author),
+                onSelectAuthor = {
+                    imagesViewModel.updateSelectedAuthor(it)
                 })
         }
     }
@@ -58,13 +55,12 @@ fun ImagesScreen(imagesViewModel: ImagesViewModel) {
 @Composable
 fun ImageScreenContent(
     images: LazyPagingItems<ImageEntity>,
-    authorsList: List<String>,
+    authorsList: List<AuthorEntity>,
     currentAuthorSelection: String?,
-    onSelectAuthor: (String) -> Unit
+    onSelectAuthor: (AuthorEntity?) -> Unit
 ) {
     Column {
-        CustomDropdownMenu(
-            menuItems = authorsList,
+        CustomDropdownMenu(menuItems = authorsList,
             initialSelection = currentAuthorSelection ?: stringResource(R.string.select_author),
             onSelectAuthor = {
                 onSelectAuthor(it)
@@ -74,6 +70,7 @@ fun ImageScreenContent(
             modifier = Modifier.padding(top = 16.dp, bottom = 16.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp),
             contentPadding = PaddingValues(horizontal = 8.dp),
+//            state = listState
         ) {
             images.apply {
                 when {
@@ -83,9 +80,7 @@ fun ImageScreenContent(
 
                     loadState.mediator?.refresh is LoadState.Error && images.itemCount == 0 -> {
                         item {
-                            ErrorRetryButton(
-                                onClick = { retry() }
-                            )
+                            ErrorRetryButton(onClick = { retry() })
                         }
                     }
 
@@ -95,10 +90,11 @@ fun ImageScreenContent(
                         }
                     }
 
-                    loadState.source.refresh is LoadState.NotLoading ||
-                            loadState.mediator?.refresh is LoadState.NotLoading -> {
+                    loadState.source.refresh is LoadState.NotLoading || loadState.mediator?.refresh is LoadState.NotLoading -> {
                         items(count = images.itemCount) { index ->
-                            images[index]?.let { ImageCard(image = it) }
+                            images[index]?.let {
+                                ImageCard(image = it)
+                            }
                         }
                     }
 

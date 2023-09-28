@@ -10,5 +10,7 @@ interface ImageRepository {
 
     suspend fun updateAuthorSelection(author: AuthorEntity?)
 
+    val authors: Flow<List<AuthorEntity>>
+
     val selectedAuthor: Flow<AuthorEntity?>
 }

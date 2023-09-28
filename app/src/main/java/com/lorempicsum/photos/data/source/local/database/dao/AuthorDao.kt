@@ -9,6 +9,9 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface AuthorDao {
     @Query("SELECT * FROM author")
+    fun getAllAuthorsFlow(): Flow<List<AuthorEntity>>
+
+    @Query("SELECT * FROM author")
     fun getAllAuthors(): List<AuthorEntity>
 
     @Query("SELECT * FROM author where is_selected = 1 LIMIT 1")

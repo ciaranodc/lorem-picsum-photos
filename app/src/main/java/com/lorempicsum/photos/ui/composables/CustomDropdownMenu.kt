@@ -20,10 +20,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.lorempicsum.photos.ui.images.DEFAULT_AUTHOR_SELECTION
+import com.lorempicsum.photos.data.source.local.database.entity.AuthorEntity
 
 @Composable
-fun CustomDropdownMenu(menuItems: List<String>, initialSelection: String, onSelectAuthor: (String) -> Unit) {
+fun CustomDropdownMenu(
+    menuItems: List<AuthorEntity>,
+    initialSelection: String,
+    onSelectAuthor: (AuthorEntity?) -> Unit
+) {
     var isExpanded by remember { mutableStateOf(false) }
 
     Row(
@@ -52,9 +56,9 @@ fun CustomDropdownMenu(menuItems: List<String>, initialSelection: String, onSele
                 onDismissRequest = { isExpanded = false }) {
                 menuItems.forEach { item ->
                     DropdownMenuItem(text = {
-                        Text(text = item)
+                        Text(text = item.authorName)
                     }, onClick = {
-                        onSelectAuthor(item)
+                        onSelectAuthor(item.copy(isSelected = true))
                         isExpanded = false
                     })
                 }
@@ -64,7 +68,7 @@ fun CustomDropdownMenu(menuItems: List<String>, initialSelection: String, onSele
         Button(
             shape = RoundedCornerShape(10),
             onClick = {
-                onSelectAuthor(DEFAULT_AUTHOR_SELECTION)
+                onSelectAuthor(null)
             }
         ) {
             Text(text = "CLEAR")
