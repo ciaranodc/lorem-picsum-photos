@@ -6,7 +6,7 @@ import com.lorempicsum.photos.data.source.local.database.entity.ImageEntity
 import kotlinx.coroutines.flow.Flow
 
 interface ImageRepository {
-    fun getImages(author: String? = null) : Flow<PagingData<ImageEntity>>
+    fun getImages(author: String? = null): Flow<PagingData<ImageEntity>>
 
     suspend fun updateAuthorSelection(author: AuthorEntity?)
 

@@ -3,7 +3,6 @@ package com.lorempicsum.photos.ui.images
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -26,7 +25,6 @@ import com.lorempicsum.photos.data.source.local.database.entity.ImageEntity
 import com.lorempicsum.photos.ui.composables.CentralProgressIndicator
 import com.lorempicsum.photos.ui.composables.CustomDropdownMenu
 import com.lorempicsum.photos.ui.composables.ErrorRetryButton
-import timber.log.Timber
 
 @ExperimentalMaterial3Api
 @Composable
@@ -39,9 +37,8 @@ fun ImagesScreen(imagesViewModel: ImagesViewModel) {
         TopAppBar(title = { Text(stringResource(R.string.app_bar_title)) })
     }) { contentPadding ->
         Box(modifier = Modifier.padding(contentPadding)) {
-            // Reversing photos list because first few photos are terrible but last few are lovely
-            Timber.d("lastSelectedAuthor $lastSelectedAuthor")
-            ImageScreenContent(images,
+            ImageScreenContent(
+                images,
                 authors,
                 lastSelectedAuthor ?: stringResource(R.string.select_author),
                 onSelectAuthor = {
@@ -67,10 +64,8 @@ fun ImageScreenContent(
             })
 
         LazyColumn(
-            modifier = Modifier.padding(top = 16.dp, bottom = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp),
-            contentPadding = PaddingValues(horizontal = 8.dp),
-//            state = listState
+            modifier = Modifier.padding(top = 10.dp, bottom = 10.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             images.apply {
                 when {
@@ -90,7 +85,8 @@ fun ImageScreenContent(
                         }
                     }
 
-                    loadState.source.refresh is LoadState.NotLoading || loadState.mediator?.refresh is LoadState.NotLoading -> {
+                    loadState.source.refresh is LoadState.NotLoading
+                            || loadState.mediator?.refresh is LoadState.NotLoading -> {
                         items(count = images.itemCount) { index ->
                             images[index]?.let {
                                 ImageCard(image = it)

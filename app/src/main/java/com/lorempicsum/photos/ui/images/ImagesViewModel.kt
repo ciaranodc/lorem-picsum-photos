@@ -6,6 +6,7 @@ import androidx.paging.cachedIn
 import com.lorempicsum.photos.data.source.local.database.entity.AuthorEntity
 import com.lorempicsum.photos.data.source.repository.ImageRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
@@ -13,6 +14,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class ImagesViewModel @Inject constructor(
     private val imageRepository: ImageRepository
@@ -39,7 +41,6 @@ class ImagesViewModel @Inject constructor(
         }
     }
 
-    //todo: filter these by authors of the images currently loaded
     val authors = imageRepository
         .authors
         .stateIn(
