@@ -24,6 +24,7 @@ import com.lorempicsum.photos.data.source.local.database.entity.AuthorEntity
 import com.lorempicsum.photos.data.source.local.database.entity.ImageEntity
 import com.lorempicsum.photos.ui.composables.CentralProgressIndicator
 import com.lorempicsum.photos.ui.composables.CustomDropdownMenu
+import com.lorempicsum.photos.ui.composables.EmptyView
 import com.lorempicsum.photos.ui.composables.ErrorRetryButton
 
 @ExperimentalMaterial3Api
@@ -70,7 +71,7 @@ fun ImageScreenContent(
             images.apply {
                 when {
                     loadState.refresh is LoadState.Loading -> item {
-                        CentralProgressIndicator()
+                        CentralProgressIndicator(modifier = Modifier.fillParentMaxSize())
                     }
 
                     loadState.mediator?.refresh is LoadState.Error && images.itemCount == 0 -> {
@@ -81,7 +82,11 @@ fun ImageScreenContent(
 
                     loadState.refresh is LoadState.NotLoading && images.itemCount == 0 -> {
                         item {
-                            Text(text = "Empty view")
+                            EmptyView(
+                                modifier = Modifier
+                                    .fillParentMaxSize()
+                                    .padding(10.dp)
+                            )
                         }
                     }
 
