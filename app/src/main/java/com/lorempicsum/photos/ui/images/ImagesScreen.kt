@@ -1,93 +1,105 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
-
 package com.lorempicsum.photos.ui.images
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.lorempicsum.photos.R
-import com.lorempicsum.photos.data.Image
-import com.lorempicsum.photos.data.Result
+import com.lorempicsum.photos.data.source.local.database.entity.AuthorEntity
+import com.lorempicsum.photos.data.source.local.database.entity.ImageEntity
 import com.lorempicsum.photos.ui.composables.CentralProgressIndicator
 import com.lorempicsum.photos.ui.composables.CustomDropdownMenu
+import com.lorempicsum.photos.ui.composables.EmptyView
 import com.lorempicsum.photos.ui.composables.ErrorRetryButton
 
-const val DEFAULT_AUTHOR_SELECTION = "Select author..."
-
+@ExperimentalMaterial3Api
 @Composable
 fun ImagesScreen(imagesViewModel: ImagesViewModel) {
-    val imagesResult by imagesViewModel.images.observeAsState(initial = Result.Loading)
-    val lastSelectedAuthor by imagesViewModel.selectedAuthor.collectAsState(initial = DEFAULT_AUTHOR_SELECTION)
+    val lastSelectedAuthor by imagesViewModel.selectedAuthor.collectAsStateWithLifecycle()
+    val images = imagesViewModel.images.collectAsLazyPagingItems()
+    val authors by imagesViewModel.authors.collectAsStateWithLifecycle()
 
-    LaunchedEffect(Unit) {
-        imagesViewModel.loadImages()
-    }
-
-    if (imagesResult.isSuccess()) {
-        val images = (imagesResult as Result.Success).data
-        val authorsList = images.map { it.author }.distinct()
-        val imagesToShow = if (lastSelectedAuthor == DEFAULT_AUTHOR_SELECTION) {
-            images.reversed() // reversing list because photos at the end are nicer!
-        } else {
-            images.filter { it.author == lastSelectedAuthor }
+    Scaffold(topBar = {
+        TopAppBar(title = { Text(stringResource(R.string.app_bar_title)) })
+    }) { contentPadding ->
+        Box(modifier = Modifier.padding(contentPadding)) {
+            ImageScreenContent(
+                images,
+                authors,
+                lastSelectedAuthor ?: stringResource(R.string.select_author),
+                onSelectAuthor = {
+                    imagesViewModel.updateSelectedAuthor(it)
+                })
         }
-
-        Scaffold(topBar = {
-            TopAppBar(title = { Text(stringResource(R.string.app_bar_title)) })
-        }) { contentPadding ->
-            Box(modifier = Modifier.padding(contentPadding)) {
-                // Reversing photos list because first few photos are terrible but last few are lovely
-                ImageScreenContent(imagesToShow,
-                    authorsList,
-                    lastSelectedAuthor,
-                    onSelectAuthor = { author ->
-                        imagesViewModel.saveAuthorSelection(author)
-                    })
-            }
-        }
-    } else if (imagesResult.isError()) {
-        ErrorRetryButton(onClick = {
-            imagesViewModel.loadImages()
-        })
-    } else {
-        CentralProgressIndicator()
     }
 }
 
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun ImageScreenContent(
-    images: List<Image>,
-    authorsList: List<String>,
-    currentAuthorSelection: String,
-    onSelectAuthor: (String) -> Unit
+    images: LazyPagingItems<ImageEntity>,
+    authorsList: List<AuthorEntity>,
+    currentAuthorSelection: String?,
+    onSelectAuthor: (AuthorEntity?) -> Unit
 ) {
     Column {
         CustomDropdownMenu(menuItems = authorsList,
-            initialSelection = currentAuthorSelection,
+            initialSelection = currentAuthorSelection ?: stringResource(R.string.select_author),
             onSelectAuthor = {
                 onSelectAuthor(it)
             })
 
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(1),
+        LazyColumn(
+            modifier = Modifier.padding(top = 10.dp, bottom = 10.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
+            images.apply {
+                when {
+                    loadState.refresh is LoadState.Loading -> item {
+                        CentralProgressIndicator(modifier = Modifier.fillParentMaxSize())
+                    }
 
-            items(items = images, key = { it.id }) { shopItem ->
-                ImageCard(image = shopItem)
+                    loadState.mediator?.refresh is LoadState.Error && images.itemCount == 0 -> {
+                        item {
+                            ErrorRetryButton(onClick = { retry() })
+                        }
+                    }
+
+                    loadState.refresh is LoadState.NotLoading && images.itemCount == 0 -> {
+                        item {
+                            EmptyView(
+                                modifier = Modifier
+                                    .fillParentMaxSize()
+                                    .padding(10.dp)
+                            )
+                        }
+                    }
+
+                    loadState.source.refresh is LoadState.NotLoading
+                            || loadState.mediator?.refresh is LoadState.NotLoading -> {
+                        items(count = images.itemCount) { index ->
+                            images[index]?.let {
+                                ImageCard(image = it)
+                            }
+                        }
+                    }
+
+                }
             }
         }
     }
