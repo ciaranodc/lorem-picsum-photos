@@ -33,11 +33,14 @@ class ImagesViewModelTest {
 
 
     @Test
-    fun whenImagesAreLoadedInViewModel_thenDetailsOfFirstImageAreCorrect() = runTest {
-        val firstImage = viewModel.images.asSnapshot()[0]
+    fun whenImagesAreLoadedInViewModel_thenDetailsOfFirstImageAreCorrect() =
+        coroutinesTestRule.testDispatcher.dispatch(EmptyCoroutineContext) {
+            runTest {
+                val firstImage = viewModel.images.asSnapshot()[0]
 
-        assertEquals("0", firstImage.id)
-        assertEquals("Alejandro Escamilla", firstImage.author)
-        assertEquals("https://picsum.photos/id/0/5000/3333", firstImage.downloadUrl)
-    }
+                assertEquals("0", firstImage.id)
+                assertEquals("Alejandro Escamilla", firstImage.author)
+                assertEquals("https://picsum.photos/id/0/5000/3333", firstImage.downloadUrl)
+            }
+        }
 }
