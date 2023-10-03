@@ -13,11 +13,11 @@ class FakePagingSource(private val imagesList: List<ImageEntity>) :
         return LoadResult.Page(
             data = imagesList,
             prevKey = null,
-            nextKey = 2
+            nextKey = null
         )
     }
 
     override fun getRefreshKey(state: PagingState<Int, ImageEntity>): Int {
-        return 2
+        return 0
     }
 }
